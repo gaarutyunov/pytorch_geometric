@@ -62,6 +62,7 @@ class LightningDataModule(PLLightningDataModule):
             from pytorch_lightning.strategies import (
                 DDPSpawnStrategy,
                 SingleDeviceStrategy,
+                DDPStrategy
             )
             strategy = self.trainer.strategy
         except ImportError:
@@ -69,15 +70,18 @@ class LightningDataModule(PLLightningDataModule):
             from pytorch_lightning.plugins import (
                 DDPSpawnPlugin,
                 SingleDevicePlugin,
+                DDPPlugin
             )
             DDPSpawnStrategy = DDPSpawnPlugin
             SingleDeviceStrategy = SingleDevicePlugin
+            DDPStrategy = DDPPlugin
             strategy = self.trainer.training_type_plugin
 
-        if not isinstance(strategy, (SingleDeviceStrategy, DDPSpawnStrategy)):
+        if not isinstance(strategy, (SingleDeviceStrategy, DDPSpawnStrategy, DDPStrategy)):
             raise NotImplementedError(
                 f"'{self.__class__.__name__}' currently only supports "
-                f"'{SingleDeviceStrategy.__name__}' and "
+                f"'{SingleDeviceStrategy.__name__}', "
+                f"'{DDPStrategy.__name__}' and "
                 f"'{DDPSpawnStrategy.__name__}' training strategies of "
                 f"'pytorch_lightning' (got '{strategy.__class__.__name__}')")
 
